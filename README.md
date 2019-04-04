@@ -61,6 +61,12 @@ end
 
 end # module
 ```
+Add, commit and push your changes
+```sh
+git add src/ExamplePkg.jl 
+git commit -m "init code"
+git push
+```
 
 6.  Add any project dependancies to your project's Project.toml and Manifest.toml files.  Note that you don't edit those files manually.  They are updated for you by using `Pkg.add("PackageName")`.  In the example above, I used the [Distributions.jl](https://github.com/JuliaStats/Distributions.jl) package, so I'd do
 ```julia
@@ -74,14 +80,42 @@ Pkg.add("Distributions")
 ```sh
 mkdir -p test && touch test/runtests.jl 
 ```
-   - Edit test/runtests.jl to include tests like we've been practicing.  For a reminder, you can see my example [test/runtests.jl]().  Since youru tests will make use of the Test package, add that to the list of dependancies.
+   - Edit test/runtests.jl to include tests like we've been practicing.  For a reminder, you can see my example [test/runtests.jl](https://github.com/eford/ExamplePkg.jl/blob/master/test/runtests.jl).  
+
+```julia
+using Test
+using ExamplePkg
+using Distributions
+
+@testset "std_normal" begin
+   dist = Normal()
+   @test pdf_normal(0.0, 0.0, 1.0) ≈ pdf(dist,0.0)
+   @test pdf_normal(2.0, 0.0, 1.0) ≈ pdf(dist,2.0)
+   @test pdf_normal(-1.0, 0.0, 1.0) ≈ pdf(dist,-1.0)
+end;
+
+@testset "std_normal" begin
+   dist = Normal(1.0,2.0)
+   @test pdf_normal(0.0, 1.0, 2.0) ≈ pdf(dist,0.0)
+   @test pdf_normal(2.0, 1.0, 2.0) ≈ pdf(dist,2.0)
+   @test pdf_normal(-1.0, 1.0, 2.0) ≈ pdf(dist,-1.0)
+end;
+```
+Since your tests will make use of the Test package, add that to the list of dependancies.  Then 
 ```sh
 julia -e 'using Pkg; Pkg.activate("."); Pkg.add("Test")'
-```
-   - Try running your tests using the package manger
+
+   - Try running your tests using the package manger.  
 ```julia
 julia -e 'using Pkg; Pkg.actviate("."); Pkg.test("ExamplePkg")'
 ```
+If you encounter any difficulties, then fix them.  Once your initial tests are ready, add/commit/push them.
+```
+git add Project.toml test
+git commit -m "init tests"
+git push
+```
+
    - Optionally, add a [.travis.yml](https://github.com/PsuAstro528/lab5-start/blob/master/.travis.yml) file, if you've like to enable Continuous Integration testing
 
    - Add & commit your changes and push to GitHub.
