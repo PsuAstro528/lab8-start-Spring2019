@@ -48,12 +48,18 @@ git push -u origin master
 
 5.  Add some trivial code to your package.  For example, in my [`src/ExamplePkg.jl`](https://github.com/eford/ExamplePkg.jl/blob/master/src/ExamplePkg.jl) I have
 ```julia
+"Package demontrating how to make your code into a Julia pacakge"
 module ExamplePkg
 
 using Distributions
 
 export pdf_normal
 
+"""
+   pdf_normal(x, mu, sigma)
+
+Return pdf of a normal distribution with mean mu and standard deviation sigma at point x.
+"""
 function pdf_normal(x::Number, mu::Number, sigma::Number)
   dist = Normal(mu,sigma)
   pdf(dist,x)
@@ -61,6 +67,8 @@ end
 
 end # module
 ```
+Note that the package must provide a module of the same name.  You can specify which function and variables you'd like users to be able to access directly after `using` your package, by listing them in `export` commands.  (A function or variables not explicitly exported would need to be accessed like `ExamplePkg.UnexportedFunction()` even after doing `using ExamplePkg.)
+
 Add, commit and push your changes
 ```sh
 git add src/ExamplePkg.jl 
@@ -136,15 +144,28 @@ git push
 julia -e 'using Pkg; Pkg.add(PackageSpec(url="https://github.com/eford/ExamplePkg.jl"))'
 
 ```
+   - Now try loading your package (e.g., `using ExamplePkg`)
+   - Run your tests (e.g., `using Pkg; Pkg.test("ExamplePkg")` )
+   - Check your docstings (e.g.,  `?ExamplePkg`)
 
-10. Add a link to the github Repo your new package below.
+10.  To continue developing your package, tell the package manager that you want to develop (as opposed to use your package).
+```julia
+using Pkg
+Pkg.develop(PackageSpec(url="git@github.com:eford/ExamplePkg.jl.git"))
+```
+This will cause Julia to download the full git repository for this package into the dev directory (by default `~/.julia/dev/ExamplePkg`, but this is likely overwridden by your JULIA_DEPOT_PATH and/or JULIA_PKG_DEVDIR environment variables).  Now, you can change into that directory to pull, push, commit and use all other features of git.  By commiting and pushing code, you'll be updating the package on github.  When you're 
+
+
+11. Add a link to the github Repo your new package below.
 
 INSERT URL
 
-11. Add other nice features to your project.  For example, if you want code to be run whenever your package in installed (e.g., downloading large datafiles), you can put that code in [`deps/build.jl`](https://julialang.github.io/Pkg.jl/v1/creating-packages/#Adding-a-build-step-to-the-package.-1).  
-
-
 12. (Optional) Register your package.  If you're interested in sharing your project code with others, then I'd suggest turning it into a Julia package.  Even better, you could _register_ your package, so that others can easily install it.  Unfortunately, the [process for registering packages is scheduled to change on Monday](https://discourse.julialang.org/t/switching-package-registration-systems-on-monday/22677?u=bicycle1885).  So I'd suggest waiting a week or two and then registering your package with the [Registrator.jl](https://github.com/JuliaComputing/Registrator.jl), so that any kinks get ironed out before registering your package.  
+
+13. (Optional) add other nice features to your project.  
+   - For example, if you want code to be run whenever your package in installed (e.g., downloading large datafiles), you can put that code in [`deps/build.jl`](https://julialang.github.io/Pkg.jl/v1/creating-packages/#Adding-a-build-step-to-the-package.-1).  
+   - As another example, if you want to generate webpages of documentation from your docstrings, you could add a [`docs` directory](https://github.com/JuliaLang/Example.jl/tree/master/docs) with the files necessary for Documenter.jl](https://juliadocs.github.io/Documenter.jl/latest/).
+
 
 ## Exercise 2:  Reflect on Goals for Semester
 #### Goals:  
